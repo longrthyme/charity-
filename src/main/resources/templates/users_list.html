@@ -3,7 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <title>User List</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
+    <!-- CSS -->
+<!--    <link rel="stylesheet" th:href="@{/css/custom-bs.css}">-->
+<!--    <link rel="stylesheet" th:href="@{/css/jquery.fancybox.min.css}">-->
+<!--    <link rel="stylesheet" th:href="@{/css/bootstrap-select.min.css}">-->
+<!--    <link rel="stylesheet" th:href="@{/fonts/icomoon/style.css}">-->
+<!--    <link rel="stylesheet" th:href="@{/fonts/line-icons/style.css}">-->
+<!--    <link rel="stylesheet" th:href="@{/css/owl.carousel.min.css}">-->
+<!--    <link rel="stylesheet" th:href="@{/css/animate.min.css}">-->
+<!--    &lt;!&ndash; <link rel="stylesheet" th:href="@{/css/style.css}"> &ndash;&gt;-->
+<!--    <link rel="stylesheet" th:href="@{/css/styles.css}">-->
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- JS -->
+<!--    <script th:src="@{/js/jquery.min.js}"></script>-->
+<!--    <script th:src="@{/js/bootstrap.bundle.min.js}"></script>-->
+<!--    <script th:src="@{/js/isotope.pkgd.min.js}"></script>-->
+<!--    <script th:src="@{/js/stickyfill.min.js}"></script>-->
+<!--    <script th:src="@{/js/jquery.fancybox.min.js}"></script>-->
+<!--    <script th:src="@{/js/jquery.easing.1.3.js}"></script>-->
+<!--    <script th:src="@{/js/jquery.waypoints.min.js}"></script>-->
+<!--    <script th:src="@{/js/jquery.animateNumber.min.js}"></script>-->
+<!--    <script th:src="@{/js/owl.carousel.min.js}"></script>-->
+<!--    <script th:src="@{/js/bootstrap-select.min.js}"></script>-->
+<!--    <script th:src="@{/js/custom.js}"></script>-->
+
 </head>
 <body>
 <div th:replace="~{admin_layout :: content(~{::usersContent})}">
@@ -12,10 +41,80 @@
             <!-- Page Header -->
             <div class="d-flex justify-content-between mb-3">
                 <h2>User List</h2>
-                <a href="/admin/users/add" class="btn btn-primary">Thêm Mới</a>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#userModal">Thêm Mới</button>
             </div>
         </div>
     </th:block>
+</div>
+
+
+<div class="container mt-3">
+    <!-- Hiển thị thông báo thành công -->
+    <div th:if="${successMessage}" class="alert alert-success" role="alert">
+        <span th:text="${successMessage}"></span>
+    </div>
+
+    <!-- Hiển thị thông báo lỗi -->
+    <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+        <span th:text="${errorMessage}"></span>
+    </div>
+</div>
+
+
+<div id="alertMessage"></div>
+
+<!-- Modal -->
+<div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="userModalLabel">Thêm Người Dùng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label class="form-label">Họ và Tên</label>
+                        <input type="text" id="fullName" class="form-control" placeholder="Nhập họ và tên">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" id="email" class="form-control" placeholder="Nhập email">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Số Điện Thoại</label>
+                        <input type="text" id="phone" class="form-control" placeholder="Nhập số điện thoại">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Địa Chỉ</label>
+                        <input type="text" id="address" class="form-control" placeholder="Nhập địa chỉ">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tài Khoản</label>
+                        <input type="text" id="username" class="form-control" placeholder="Nhập tài khoản">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Mật Khẩu</label>
+                        <input type="password" id="password" class="form-control" placeholder="Nhập mật khẩu">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Vai Trò</label>
+                        <select id="role" class="form-select">
+                            <option value="ROLE_ADMIN">Admin</option>
+                            <option value="ROLE_USER">Người Dùng</option>
+                        </select>
+                    </div>
+                    <button type="button" id="submitBtn" class="btn btn-primary">Lưu</button>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" id="btnAddUser">Thêm</button>
+            </div>
+        </div>
+    </div>
 </div>
 
         <!-- Search & Entries Selection -->
@@ -88,6 +187,43 @@
     }
 
     document.addEventListener("DOMContentLoaded", changeEntries);
+
+
+     document.getElementById("btnAddUser").addEventListener("click", function () {
+        const userData = {
+            fullName: document.getElementById("fullName").value,
+            email: document.getElementById("email").value,
+            phone: document.getElementById("phone").value,
+            address: document.getElementById("address").value,
+            username: document.getElementById("username").value,
+            password: document.getElementById("password").value,
+            role: document.getElementById("role").value
+        };
+
+        fetch("/admin/create-user", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(userData)
+        }) .then(data => {
+        if (data.error) {
+            document.getElementById("alertMessage").innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+        } else {
+
+            document.getElementById("alertMessage").innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+           // Đóng modal (chỉ hoạt động với Bootstrap 5)
+            const modal = bootstrap.Modal.getInstance(document.getElementById("userModal"));
+            modal.hide();
+
+            window.location.href = "/admin/users";
+        }
+    })
+    .catch(error => {
+        console.error("Lỗi:", error);
+        document.getElementById("alertMessage").innerHTML = `<div class="alert alert-danger">Lỗi: ${error.message}</div>`;
+    });
+    });
 </script>
 
 </body>

@@ -1,5 +1,6 @@
 package com.charity.charity.service;
 
+import com.charity.charity.dto.UserDTO;
 import com.charity.charity.entity.User;
 
 import java.util.List;
@@ -15,4 +16,6 @@ public interface UserService {
     void deleteUser(Long id);
 
     void toggleUserStatus(Long id);
+
+    void createUser(UserDTO userDTO);
 }

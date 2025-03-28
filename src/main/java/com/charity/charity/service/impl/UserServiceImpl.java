@@ -1,20 +1,27 @@
 package com.charity.charity.service.impl;
 
+import com.charity.charity.controller.UserController;
+import com.charity.charity.controller.admin.AdminUserController;
+import com.charity.charity.dto.UserDTO;
 import com.charity.charity.entity.Role;
 import com.charity.charity.entity.User;
 import com.charity.charity.repository.RoleRepository;
 import com.charity.charity.repository.UserRepository;
 import com.charity.charity.service.UserService;
 import com.charity.charity.utils.PasswordHasher;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import java.util.*;
 
 @Service
 public class UserServiceImpl implements UserService {
+
+    private static final Logger logger = LogManager.getLogger(UserServiceImpl.class);
+
     @Autowired
     private UserRepository userRepository;
 
@@ -67,5 +74,25 @@ public class UserServiceImpl implements UserService {
             user.setStatus(user.getStatus() == 1 ? 0 : 1); // Toggle status (1 -> 0, 0 -> 1)
             userRepository.save(user);
         });
+    }
+
+    @Override
+    public void createUser(UserDTO userDTO) {
+
+        logger.debug("value object " + userDTO);
+        User user = new User();
+        user.setFullName(userDTO.getFullName());
+        user.setEmail(userDTO.getEmail());
+        user.setPhoneNumber(userDTO.getPhone());
+        user.setAddress(userDTO.getAddress());
+        user.setUsername(userDTO.getUsername());
+        user.setPassword(passwordEncoder.hashPassword(userDTO.getPassword()));
+        Role role = roleRepository.findByName(userDTO.getRole())
+                .orElseThrow(() -> new RuntimeException("Role not found"));
+        Set<Role> roles = new HashSet<>();
+        roles.add(role);
+        user.setRoles(roles);
+
+        userRepository.save(user);
     }
 }

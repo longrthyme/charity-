@@ -1,46 +1,65 @@
+
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Admin Panel</title>
-    <link rel="stylesheet" th:href="@{/user/assets/css/custom-bs.css}">
-    <link rel="stylesheet" th:href="@{/user/assets/css/jquery.fancybox.min.css}">
-    <link rel="stylesheet" th:href="@{/user/assets/css/bootstrap-select.min.css}">
-    <link rel="stylesheet" th:href="@{/user/assets/fonts/icomoon/style.css}">
-    <link rel="stylesheet" th:href="@{/user/assets/fonts/line-icons/style.css}">
-    <link rel="stylesheet" th:href="@{/user/assets/css/owl.carousel.min.css}">
-    <link rel="stylesheet" th:href="@{/user/assets/css/animate.min.css}">
-<!--    <link rel="stylesheet" th:href="@{/user/assets/css/style.css}">-->
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+<!--    <script src="https://kit.fontawesome.com/a076d05399.js"></script>-->
+
+    <!-- CSS -->
+    <link rel="stylesheet" th:href="@{/css/custom-bs.css}">
+    <link rel="stylesheet" th:href="@{/css/jquery.fancybox.min.css}">
+    <link rel="stylesheet" th:href="@{/css/bootstrap-select.min.css}">
+    <link rel="stylesheet" th:href="@{/fonts/icomoon/style.css}">
+    <link rel="stylesheet" th:href="@{/fonts/line-icons/style.css}">
+    <link rel="stylesheet" th:href="@{/css/owl.carousel.min.css}">
+    <link rel="stylesheet" th:href="@{/css/animate.min.css}">
+    <!-- <link rel="stylesheet" th:href="@{/css/style.css}"> -->
     <link rel="stylesheet" th:href="@{/css/styles.css}">
 
-
-    <script th:src="@{/user/assets/js/jquery.min.js}"></script>
-    <script th:src="@{/user/assets/js/bootstrap.bundle.min.js}"></script>
-    <script th:src="@{/user/assets/js/isotope.pkgd.min.js}"></script>
-    <script th:src="@{/user/assets/js/stickyfill.min.js}"></script>
-    <script th:src="@{/user/assets/js/jquery.fancybox.min.js}"></script>
-    <script th:src="@{/user/assets/js/jquery.easing.1.3.js}"></script>
-    <script th:src="@{/user/assets/js/jquery.waypoints.min.js}"></script>
-    <script th:src="@{/user/assets/js/jquery.animateNumber.min.js}"></script>
-    <script th:src="@{/user/assets/js/owl.carousel.min.js}"></script>
-    <script th:src="@{/user/assets/js/bootstrap-select.min.js}"></script>
-    <script th:src="@{/user/assets/js/custom.js}"></script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"
-            crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-            crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <!-- JS -->
+<!--    <script th:src="@{/js/jquery.min.js}"></script>-->
+<!--    <script th:src="@{/js/bootstrap.bundle.min.js}"></script>-->
+<!--    <script th:src="@{/js/isotope.pkgd.min.js}"></script>-->
+<!--    <script th:src="@{/js/stickyfill.min.js}"></script>-->
+<!--    <script th:src="@{/js/jquery.fancybox.min.js}"></script>-->
+<!--    <script th:src="@{/js/jquery.easing.1.3.js}"></script>-->
+<!--    <script th:src="@{/js/jquery.waypoints.min.js}"></script>-->
+<!--    <script th:src="@{/js/jquery.animateNumber.min.js}"></script>-->
+<!--    <script th:src="@{/js/owl.carousel.min.js}"></script>-->
+<!--    <script th:src="@{/js/bootstrap-select.min.js}"></script>-->
+<!--    <script th:src="@{/js/custom.js}"></script>-->
 
 
+<!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"-->
+<!--                crossorigin="anonymous"></script>-->
+<!--        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"-->
+<!--                crossorigin="anonymous"></script>-->
+<!--        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>-->
+
+
+    <style>
+
+    </style>
 </head>
 <body>
-<!-- Sidebar -->
-<div th:replace="~{sidebar :: sidebar}"></div>
 
-<!-- Main Content Area -->
-<div class="content" th:fragment="content (pageContent)">
-    <th:block th:replace="${pageContent}"></th:block>
+<!-- Wrapper -->
+<div class="wrapper">
+
+    <div th:insert="~{sidebar :: sidebar}"></div>
+
+
+
+    <!-- Main Content Area -->
+    <div class="content abc " th:fragment="content (pageContent)">
+            <div th:replace="~{sidebar :: sidebar}"></div>
+
+        <th:block th:replace="${pageContent}"></th:block>
+    </div>
+
 </div>
+
 </body>
 </html>
