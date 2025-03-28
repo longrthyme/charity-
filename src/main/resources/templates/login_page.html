@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login Page</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body class="bg-gradient-primary d-flex justify-content-center align-items-center vh-100">
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-5">
+            <div class="card shadow-lg border-0 rounded-lg mt-5">
+                <div class="card-header text-center">
+                    <h3 class="text-primary">Login</h3>
+                </div>
+                <div class="card-body">
+
+                    <div th:if="${param.success}" class="alert alert-success text-center">
+                        You successfully registered. Please log in.
+                    </div>
+                    <div th:if="${param.error}" class="alert alert-danger text-center">
+                        Login or password incorrect.
+                    </div>
+                    <div th:if="${param.logout}" class="alert alert-info text-center">
+                        You've been logged out.
+                    </div>
+
+                    <form th:action="@{/login}" method="post">
+                        <div class="form-floating mb-3">
+                            <input id="username" name="username" type="text" class="form-control" placeholder="Enter username" required>
+                            <label for="username">Username</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input id="password" name="password" type="password" class="form-control" placeholder="Enter password" required>
+                            <label for="password">Password</label>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Log in</button>
+                        </div>
+                    </form>
+
+                    <div class="text-center mt-3">
+                        <a href="/" class="small text-decoration-none">Back to Home</a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
