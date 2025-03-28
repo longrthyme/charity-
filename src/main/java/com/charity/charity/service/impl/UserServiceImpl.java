@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -45,4 +46,26 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByUsername(username);
     }
 
+    @Override
+    public List<User> getUsers(String search) {
+        if (search == null || search.isEmpty()) {
+            return userRepository.findAll();
+        }
+
+        return userRepository.findByFullNameContainingIgnoreCase(search);
+    }
+
+
+    @Override
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
+    }
+
+    @Override
+    public void toggleUserStatus(Long id) {
+        userRepository.findById(id).ifPresent(user -> {
+            user.setStatus(user.getStatus() == 1 ? 0 : 1); // Toggle status (1 -> 0, 0 -> 1)
+            userRepository.save(user);
+        });
+    }
 }
