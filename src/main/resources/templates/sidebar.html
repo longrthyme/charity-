@@ -1,0 +1,47 @@
+<!-- Sidebar -->
+<nav class="sidebar" th:fragment="sidebar">
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link"
+               th:classappend="${currentURI != null and #strings.contains(currentURI, '/admin/users')} ? 'active' : ''"
+               th:href="@{/admin/users}">
+                <i class="fas fa-users"></i> Users
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link"
+               th:classappend="${currentURI != null and #strings.contains(currentURI, '/admin/donations')} ? 'active' : ''"
+               th:href="@{/admin/donations}">
+                <i class="fas fa-donate"></i> Donations
+            </a>
+        </li>
+    </ul>
+</nav>
+
+<!-- Sidebar Styles -->
+<style>
+    .sidebar {
+        width: 250px;
+        height: 100vh;
+        background: #343a40;
+        color: white;
+        position: fixed;
+        padding-top: 20px;
+    }
+
+    .sidebar .nav-link {
+        color: white;
+        padding: 10px;
+        display: block;
+        text-decoration: none;
+    }
+
+    .sidebar .nav-link.active {
+        background: #007bff;
+        border-radius: 5px;
+    }
+
+    .sidebar .nav-link:hover {
+        background: #495057;
+    }
+</style>
