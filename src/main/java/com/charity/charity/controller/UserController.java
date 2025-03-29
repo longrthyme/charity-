@@ -92,6 +92,12 @@ public class UserController {
         }
     }
 
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate(); // Clear session
+        return "redirect:/login"; // Redirect to login page
+    }
+
 
     @GetMapping("/")
     public String getAllDonations(
