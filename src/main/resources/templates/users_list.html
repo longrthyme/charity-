@@ -18,8 +18,9 @@
 <!--    <link rel="stylesheet" th:href="@{/css/styles.css}">-->
 
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- JS -->
 <!--    <script th:src="@{/js/jquery.min.js}"></script>-->
 <!--    <script th:src="@{/js/bootstrap.bundle.min.js}"></script>-->
@@ -62,6 +63,9 @@
 
 
 <div id="alertMessage"></div>
+
+
+
 
 <!-- Modal -->
 <div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
@@ -117,6 +121,64 @@
     </div>
 </div>
 
+
+<!-- Modal Update User -->
+<div class="modal fade" id="updateUserModal" tabindex="-1" aria-labelledby="updateUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateUserModalLabel">Cập Nhật Người Dùng</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="updateUserForm">
+                    <input type="hidden" id="updateUserId">
+
+                    <div class="form-group">
+                        <label for="updateFullName">Họ và Tên</label>
+                        <input type="text" class="form-control" id="updateFullName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="updateEmail">Email</label>
+                        <input type="email" class="form-control" id="updateEmail" disabled>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="updatePhone">Số Điện Thoại</label>
+                        <input type="text" class="form-control" id="updatePhone">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="updateAddress">Địa Chỉ</label>
+                        <input type="text" class="form-control" id="updateAddress">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="updateUsername">Tên Đăng Nhập</label>
+                        <input type="text" class="form-control" id="updateUsername" disabled>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="updateRole">Vai Trò</label>
+                        <select id="updateRole" multiple>
+                            <option value="ROLE_USER">User</option>
+                            <option value="ROLE_ADMIN">Admin</option>
+                        </select>
+
+                    </div>
+
+                    <button type="submit" class="btn btn-success">Cập Nhật</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
         <!-- Search & Entries Selection -->
         <div class="d-flex justify-content-between mb-3">
             <input type="text" id="search" class="form-control" placeholder="Search..." onkeyup="searchTable()" style="width: 300px;">
@@ -153,8 +215,19 @@
                 </td>
                 <td th:text="${user.status == 1 ? 'Hoạt động' : 'Đã khóa'}"></td>
                 <td>
-                    <a th:href="@{/admin/users/edit/{id}(id=${user.id})}" class="btn btn-warning">Sửa</a>
-                    <a th:href="@{/admin/users/delete/{id}(id=${user.id})}" class="btn btn-danger" onclick="return confirm('Xóa người dùng này?')">Xóa</a>
+                    <button class="btn btn-primary btnUpdateUser"
+                            th:data-id="${user.id}"
+                            th:data-fullname="${user.fullName}"
+                            th:data-email="${user.email}"
+                            th:data-phone="${user.phoneNumber}"
+                            th:data-address="${user.address}"
+                            th:data-username="${user.username}"
+
+                    >
+                        Cập Nhật
+                    </button>                    <button class="btn btn-danger btnDeleteUser" th:data-id="${user.id}" th:data-email="${user.email}" th:data-fullname="${user.fullName}">
+                        Xóa
+                    </button>
                     <a th:href="@{/admin/users/detail/{id}(id=${user.id})}" class="btn btn-info">Chi Tiết</a>
                     <a th:href="@{/admin/users/toggle/{id}(id=${user.id})}" class="btn"
                        th:text="${user.status == 1 ? 'Khóa' : 'Mở Khóa'}"
@@ -167,6 +240,66 @@
 </div>
 
 <script>
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+    // Handle opening update modal
+    document.querySelectorAll(".btnUpdateUser").forEach(button => {
+        button.addEventListener("click", function () {
+            document.getElementById("updateUserId").value = this.getAttribute("data-id");
+            document.getElementById("updateFullName").value = this.getAttribute("data-fullname");
+            document.getElementById("updateEmail").value = this.getAttribute("data-email");
+            document.getElementById("updatePhone").value = this.getAttribute("data-phone");
+            document.getElementById("updateAddress").value = this.getAttribute("data-address");
+            document.getElementById("updateUsername").value = this.getAttribute("data-username");
+            document.getElementById("updateRole").value = this.getAttribute("data-role");
+
+            // Show modal
+            $("#updateUserModal").modal("show");
+        });
+    });
+
+    // Handle update user request
+    document.getElementById("updateUserForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const userId = document.getElementById("updateUserId").value;
+        const updatedData = {
+            fullName: document.getElementById("updateFullName").value,
+            email: document.getElementById("updateEmail").value,
+            phone: document.getElementById("updatePhone").value,
+            address: document.getElementById("updateAddress").value,
+            username: document.getElementById("updateUsername").value,
+            role: document.getElementById("updateRole").value
+        };
+
+        fetch(`/admin/update-user/${userId}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(updatedData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                Swal.fire("Thành công!", "Thông tin người dùng đã được cập nhật.", "success")
+                    .then(() => {
+                        $("#updateUserModal").modal("hide");
+                        loadUserList(); // Reload user list after updating
+                    });
+            } else {
+                Swal.fire("Lỗi!", data.message || "Không thể cập nhật người dùng.", "error");
+            }
+        })
+        .catch(error => {
+            console.error("Lỗi:", error);
+            Swal.fire("Lỗi!", "Có lỗi xảy ra khi cập nhật.", "error");
+        });
+    });
+});
+
+
     function searchTable() {
         let input = document.getElementById("search").value.toLowerCase();
         let rows = document.querySelectorAll("#userTable tbody tr");
@@ -224,6 +357,47 @@
         document.getElementById("alertMessage").innerHTML = `<div class="alert alert-danger">Lỗi: ${error.message}</div>`;
     });
     });
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".btnDeleteUser").forEach(button => {
+        button.addEventListener("click", function () {
+            const fullName = this.getAttribute("data-fullname");
+            const email = this.getAttribute("data-email");
+
+            // Show confirmation popup
+            Swal.fire({
+                title: `Xác nhận xóa`,
+                text: `Bạn có chắc chắn muốn xóa "${fullName}"?`,
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#6c757d",
+                confirmButtonText: "Xóa",
+                cancelButtonText: "Đóng"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Send DELETE request
+                    fetch(`/admin/delete-user?email=${email}`, {
+                        method: "POST"
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status == "success") {
+                            Swal.fire("Đã xóa!", "Người dùng đã bị xóa.", "success");
+                            window.location.href = "/admin/users";
+
+                        } else {
+                            Swal.fire("Lỗi!", data.error, "error");
+                        }
+                    })
+                    .catch(error => Swal.fire("Lỗi!", error.message, "error"));
+                }
+            });
+        });
+    });
+});
+
 </script>
 
 </body>

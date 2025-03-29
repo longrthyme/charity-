@@ -13,7 +13,10 @@ public interface UserService {
 
     List<User> getUsers(String search);
 
-    void deleteUser(Long id);
+
+    boolean updateUser(Long id, UserDTO userDTO);
+
+    boolean deleteUserByEmail(String email);
 
     void toggleUserStatus(Long id);
 

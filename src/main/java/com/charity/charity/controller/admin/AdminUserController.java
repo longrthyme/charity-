@@ -36,10 +36,22 @@ public class AdminUserController {
         model.addAttribute("currentURI", request.getRequestURI()); // Truyền URL vào Thymeleaf
         return "users_list";    }
 
-    @GetMapping("/admin/users/delete/{id}")
-    public String deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
-        return "redirect:/admin/users";
+    @PostMapping("/admin/delete-user")
+    public ResponseEntity<?> deleteUser(@RequestParam String email) {
+
+            boolean isDeleted = userService.deleteUserByEmail(email);
+            Map<String, String> response = new HashMap<>();
+
+            if (isDeleted) {
+                response.put("status", "success");
+                response.put("message", "Người dùng đã được xóa.");
+                return ResponseEntity.ok(response);  // ✅ Return JSON
+            } else {
+                response.put("status", "error");
+                response.put("message", "Không tìm thấy người dùng!");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            }
+
     }
 
 
@@ -48,6 +60,24 @@ public class AdminUserController {
         userService.toggleUserStatus(id);
         return "redirect:/admin/users";
     }
+
+
+    @PutMapping("/admin/update-user/{id}")
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody UserDTO userDTO) {
+        try {
+            boolean isUpdated = userService.updateUser(id, userDTO);
+            if (isUpdated) {
+                return ResponseEntity.ok("success");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("Người dùng không tồn tại!");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Lỗi khi cập nhật người dùng.");
+        }
+    }
+
 
     @PostMapping("/admin/create-user")
     public ResponseEntity<Map<String, String>> addUser(@RequestBody UserDTO userDTO, RedirectAttributes redirectAttributes) {

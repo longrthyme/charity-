@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách các đợt quyên góp</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-4">
+    <h2 class="mb-4">Danh sách các đợt quyên góp</h2>
+
+    <!-- Bộ lọc và Thêm mới -->
+    <div class="d-flex justify-content-between mb-3">
+        <div>
+            <input type="text" id="searchInput" class="form-control" placeholder="🔍 Tìm kiếm theo tên">
+        </div>
+        <div>
+            <label for="rowsPerPage">Hiển thị:</label>
+            <select id="rowsPerPage" class="form-select d-inline-block w-auto">
+                <option value="5">5 hàng</option>
+                <option value="10" selected>10 hàng</option>
+                <option value="15">15 hàng</option>
+            </select>
+        </div>
+        <!-- Nút mở modal -->
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createDonationModal">Thêm mới</button>
+
+    </div>
+
+
+    <!-- Modal Bootstrap -->
+    <div class="modal fade" id="createDonationModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Thêm mới đợt quyên góp</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="createDonationForm">
+                        <div class="mb-3">
+                            <label class="form-label">Tên đợt quyên góp:</label>
+                            <input type="text" class="form-control" id="donationName" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Ngày bắt đầu:</label>
+                            <input type="date" class="form-control" id="startDate" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Ngày kết thúc:</label>
+                            <input type="date" class="form-control" id="endDate" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Tổ chức từ thiện:</label>
+                            <input type="text" class="form-control" id="charityOrganization" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Số điện thoại:</label>
+                            <input type="text" class="form-control" id="phone" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Nội dung:</label>
+                            <textarea class="form-control" id="content" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-primary" onclick="submitCreateDonation()">Tạo mới</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <table class="table table-bordered">
+        <thead class="table-dark">
+        <tr>
+            <th>Mã</th>
+            <th>Tên đợt quyên góp</th>
+            <th>Ngày bắt đầu</th>
+            <th>Ngày kết thúc</th>
+            <th>Tổ chức từ thiện</th>
+            <th>Số điện thoại</th>
+            <th>Tổng tiền</th>
+            <th>Trạng thái</th>
+            <th>Hành động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="donation : ${donations}">
+            <td th:text="${donation.id}"></td>
+            <td th:text="${donation.name}"></td>
+            <td th:text="${#dates.format(donation.startDate, 'dd/MM/yyyy')}"></td>
+            <td th:text="${#dates.format(donation.endDate, 'dd/MM/yyyy')}"></td>
+            <td th:text="${donation.charityOrganization}"></td>
+            <td th:text="${donation.phone}"></td>
+            <td th:text="${#numbers.formatDecimal(donation.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></td>
+            <td>
+                <span th:if="${donation.status == 'ACTIVE'}" class="badge bg-success">Đang hoạt động</span>
+                <span th:if="${donation.status == 'COMPLETED'}" class="badge bg-secondary">Đã kết thúc</span>
+                <span th:if="${donation.status == 'PENDING'}" class="badge bg-warning text-dark">Chờ duyệt</span>
+            </td>
+            <td>
+                <a th:href="@{/admin/donations/details/{id}(id=${donation.id})}" class="btn btn-info btn-sm">Chi tiết</a>
+                <a th:href="@{/admin/donations/update/{id}(id=${donation.id})}" class="btn btn-primary btn-sm">Cập nhật</a>
+                <a th:if="${donation.status == 'ACTIVE'}" href="#" class="btn btn-danger btn-sm btnEndDonation"
+                   th:data-id="${donation.id}" th:data-name="${donation.name}">Kết thúc</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal xác nhận kết thúc đợt quyên góp -->
+<div class="modal fade" id="confirmEndModal" tabindex="-1" aria-labelledby="confirmEndModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmEndModalLabel">Xác nhận kết thúc</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Bạn có chắc chắn muốn kết thúc đợt quyên góp <b id="donationName"></b> không?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-danger" id="btnConfirmEnd">Kết thúc</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    $(document).ready(function () {
+        let donationId = null;
+
+        $(".btnEndDonation").click(function () {
+            donationId = $(this).data("id");
+            let donationName = $(this).data("name");
+            $("#donationName").text(donationName);
+            $("#confirmEndModal").modal("show");
+        });
+
+        $("#btnConfirmEnd").click(function () {
+            if (donationId) {
+                $.ajax({
+                    url: "/admin/donations/end/" + donationId,
+                    type: "POST",
+                    success: function () {
+                        location.reload();
+                    },
+                    error: function () {
+                        alert("Có lỗi xảy ra!");
+                    }
+                });
+            }
+        });
+    });
+
+    function submitCreateDonation() {
+    const donationData = {
+        name: document.getElementById("donationName").value,
+        startDate: document.getElementById("startDate").value,
+        endDate: document.getElementById("endDate").value,
+        charityOrganization: document.getElementById("charityOrganization").value,
+        phone: document.getElementById("phone").value,
+        content: document.getElementById("content").value
+    };
+
+    fetch("/admin/donations/add", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(donationData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert("Đợt quyên góp đã được tạo thành công!");
+        let modal = new bootstrap.Modal(document.getElementById('createDonationModal'));
+        modal.hide(); // Ẩn modal
+        location.reload(); // Reload danh sách đợt quyên góp
+    })
+    .catch(error => {
+        console.error("Lỗi khi tạo đợt quyên góp:", error);
+        alert("Có lỗi xảy ra!");
+    });
+}
+
+</script>
+</body>
+</html>

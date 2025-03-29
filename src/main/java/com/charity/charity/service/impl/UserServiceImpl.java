@@ -1,7 +1,5 @@
 package com.charity.charity.service.impl;
 
-import com.charity.charity.controller.UserController;
-import com.charity.charity.controller.admin.AdminUserController;
 import com.charity.charity.dto.UserDTO;
 import com.charity.charity.entity.Role;
 import com.charity.charity.entity.User;
@@ -9,7 +7,6 @@ import com.charity.charity.repository.RoleRepository;
 import com.charity.charity.repository.UserRepository;
 import com.charity.charity.service.UserService;
 import com.charity.charity.utils.PasswordHasher;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -64,8 +61,30 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+    public boolean updateUser(Long id, UserDTO userDTO) {
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setFullName(userDTO.getFullName());
+            user.setPhoneNumber(userDTO.getPhone());
+            user.setAddress(userDTO.getAddress());
+//            user.setRole(userDTO.getRole()); // Role should be updated only if necessary
+
+            userRepository.save(user);
+            return true;
+        }
+        return false;
+    }
+
+
+    @Override
+    public boolean deleteUserByEmail(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
+        if (user.isPresent()) {
+            userRepository.delete(user.get());
+            return true;
+        }
+        return false;
     }
 
     @Override
