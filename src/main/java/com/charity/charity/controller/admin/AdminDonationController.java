@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,10 +23,12 @@ public class AdminDonationController {
 
 
     @GetMapping("/admin/donation/list")
-    public ResponseEntity<List<Donation>> getAllDonations(@RequestParam(required = false) String search) {
+    public String getAllDonations(@RequestParam(required = false) String search, Model model) {
         List<Donation> donations = donationService.getDonations(search);
-        return ResponseEntity.ok(donations);
+        model.addAttribute("donations", donations);
+        return "donations_list";  // Tên file Thymeleaf (donations_list.html)
     }
+
 
     @PostMapping
     public ResponseEntity<?> createDonation(@RequestBody DonationDTO donationDTO) {
