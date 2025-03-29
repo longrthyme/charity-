@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Chi Tiết Quyên Góp</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        .donation-card {
+            border-left: 5px solid #8cbc21;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .donate-button {
+            background-color: #8cbc21;
+            color: white;
+            font-weight: bold;
+        }
+        .donate-button:hover {
+            background-color: #6b9b1d;
+        }
+        .donor-list {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 10px;
+            background: #fff;
+        }
+        .footer {
+            background: #333;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="/">Quyên Góp</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<div class="container mt-4">
+
+    <div id="loginAlert" class="alert alert-danger d-none" role="alert">
+        User not logged in. Please <a href="/login">log in</a> to donate.
+    </div>
+
+    <div class="row">
+        <!-- Left Side: Donation Details -->
+        <div class="col-md-8">
+            <div class="donation-card p-4 shadow-sm">
+                <h2 th:text="${donation.name}">Chi tiết quyên góp</h2>
+                <p><strong>Mã quyên góp:</strong> <span th:text="${donation.code}"></span></p>
+                <p><strong>Ngày bắt đầu:</strong> <span th:text="${donation.startDate}"></span></p>
+                <p><strong>Ngày kết thúc:</strong> <span th:text="${donation.endDate}"></span></p>
+                <p><strong>Tổ chức:</strong> <span th:text="${donation.organizationName}"></span></p>
+                <p><strong>Số điện thoại:</strong> <span th:text="${donation.phoneNumber}"></span></p>
+                <p><strong>Tổng số tiền quyên góp:</strong> <span th:text="${donation.money}"></span> VND</p>
+                <p><strong>Trạng thái:</strong> <span th:text="${donation.status}"></span></p>
+
+                <!-- Donate Button -->
+                <button class="btn donate-button btn-lg w-100 mt-3" data-bs-toggle="modal" data-bs-target="#donationModal">
+                    Quyên góp
+                </button>
+            </div>
+        </div>
+
+
+        <!-- Donation Modal -->
+        <div class="modal fade" id="donationModal" tabindex="-1" aria-labelledby="donationModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Quyên góp</h5>
+                        <button type="button" class="close text-dark" data-dismiss="modal" aria-label="Close" style="border: none; background: transparent;">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="donationForm">
+
+                            <!-- Hidden Donation ID -->
+                            <input type="hidden" id="donationId" name="donationId" th:value="${donation.id}">
+
+
+                            <div class="form-group">
+                                <label for="name">Họ tên:</label>
+                                <input type="text" class="form-control" id="name" name="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="money">Số tiền quyên góp:</label>
+                                <input type="number" class="form-control" id="money" name="money" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="text">Lời nhắn:</label>
+                                <textarea class="form-control" id="text" name="text" rows="4"></textarea>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn text-white" data-dismiss="modal" style="background-color: black;">Đóng</button>
+                        <button type="button" class="btn text-white" id="submitDonation" style="background-color: #8cbc21;">Quyên góp</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side: Donor List -->
+        <div class="col-md-4">
+            <div class="donor-list shadow-sm">
+                <h4>Danh sách nhà tài trợ</h4>
+                <ul class="list-group">
+                    <li class="list-group-item d-flex justify-content-between align-items-center"
+                        th:each="donor : ${donors}">
+                            <span>
+                                <strong th:text="${donor.name}"></strong>
+                                <br>
+                                <small th:text="${donor.created}"></small>
+                            </span>
+                        <span class="badge bg-success" th:text="${donor.money} + ' VND'"></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back Button -->
+    <div class="text-center mt-4">
+        <a href="/" class="btn btn-outline-secondary">Quay lại</a>
+    </div>
+
+</div>
+
+<!-- Import Footer -->
+<div th:replace="fragments/footer :: footer"></div>
+
+
+<!-- Bootstrap JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.getElementById('submitDonation').addEventListener('click', function() {
+        const donationData = {
+            name: document.getElementById('name').value,
+            money: document.getElementById('money').value,
+            text: document.getElementById('text').value,
+donationId: document.getElementById('donationId').value, // Get hidden ID
+
+        };
+
+        fetch('/donation/add/user', {  // Change API endpoint if needed
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(donationData)
+        })
+        .then(response => {
+        if (!response.ok) {
+            return response.text().then(text => { throw new Error(text); });
+        }
+        return response.json();
+    })
+    .then(data => {
+        alert("Quyên góp thành công!");
+        location.reload();
+    })
+    .catch(error => {
+        if (error.message === "User not logged in") {
+            document.getElementById("loginAlert").classList.remove("d-none");
+        } else {
+            alert("Có lỗi xảy ra, vui lòng thử lại!");
+        }
+    });
+    });
+</script>
+
+</body>
+</html>

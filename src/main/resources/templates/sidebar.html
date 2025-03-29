@@ -17,7 +17,7 @@
         </li>
         <li class="nav-item">
             <a class="nav-link text-white px-3"
-               th:classappend="${currentURI != null and #strings.contains(currentURI, '/admin/donations')} ? 'active bg-primary text-white' : ''"
+               th:classappend="${currentURI != null and #strings.contains(currentURI, '/admin/donation/list')} ? 'active bg-primary text-white' : ''"
                th:href="@{/admin/donations}">
                 <i class="fas fa-donate"></i> Donations
             </a>

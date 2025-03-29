@@ -1,8 +1,14 @@
 package com.charity.charity.entity;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "user_donation")
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserDonation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
